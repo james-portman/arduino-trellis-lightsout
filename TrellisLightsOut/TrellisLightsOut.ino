@@ -28,17 +28,37 @@ void setup() {
 
   trellis.begin(0x70);
   
-  for (uint8_t i=0; i<numKeys; i++) {
-    trellis.setLED(i);
-    trellis.writeDisplay();
-    delay(50);
-  }  
+//  for (uint8_t i=0; i<numKeys; i++) {
+//    trellis.setLED(i);
+//    trellis.writeDisplay();
+//    delay(50);
+//  }  
 
   clearBoard();
   trellis.writeDisplay();
 
+  waitForStartupPress();
   // Set up a random board
   makeRandomBoard();
+}
+
+void waitForStartupPress() {
+  // use this to get random seed on startup (variable time until button pressed)
+  int light = 0;
+  while(1) {
+    delay(30);
+    if (trellis.readSwitches()) {
+      break;
+    }
+    toggle(light);
+    trellis.writeDisplay();
+    light++;
+    if (light > 15) { light = 0; }
+  }
+  clearBoard();
+  trellis.writeDisplay();
+  delay(500);
+  randomSeed(millis()); // reset random seed
 }
 
 void toggle(int placeVal) {
@@ -92,6 +112,8 @@ void checkForWin() {
 
   clearBoard();
   trellis.writeDisplay();
+
+  randomSeed(millis()); // reset random seed
   makeRandomBoard();
 }
 
@@ -116,15 +138,15 @@ void loop() {
   // If a button was just pressed or released...
   if (trellis.readSwitches()) {
     // go through every button
+    int lastPressed;
     for (uint8_t i=0; i<numKeys; i++) {
       if (trellis.justPressed(i)) {
         makeYourMove(i);
+        lastPressed = i;
       }
     }
-    // tell the trellis to set the LEDs we requested
     trellis.writeDisplay();
 
-    // check for a win condition (all out)
     checkForWin();
   }
 }
