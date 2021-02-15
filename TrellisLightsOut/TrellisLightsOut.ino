@@ -34,9 +34,7 @@ void setup() {
     delay(50);
   }  
 
-  for (uint8_t i=0; i<numKeys; i++) {
-    trellis.clrLED(i);
-  }
+  clearBoard();
   trellis.writeDisplay();
 
   // Set up a random board
@@ -70,9 +68,31 @@ int toggleNeighbours(int placeVal) {
   if (up >= 0) { toggle(up); }
 }
 
+void clearBoard() {
+  for (int i=0; i<16; i++) {
+    trellis.clrLED(i);
+  }
+}
 
 void checkForWin() {
+  for (int i=0; i<16; i++) {
+    if (trellis.isLED(i)) {
+      return;
+    }
+  }
+  // must all be out if we reach here
 
+  for (int loops=0; loops<20; loops++) {
+    for (int i=0; i<16; i++) {
+      toggle(i);
+    }
+    trellis.writeDisplay();
+    delay(100);
+  }
+
+  clearBoard();
+  trellis.writeDisplay();
+  makeRandomBoard();
 }
 
 void makeRandomBoard() {
