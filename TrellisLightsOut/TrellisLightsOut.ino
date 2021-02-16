@@ -44,6 +44,8 @@ void setup() {
 
 void waitForStartupPress() {
   // use this to get random seed on startup (variable time until button pressed)
+
+  // go through toggling each light
   int light = 0;
   while(1) {
     delay(30);
@@ -55,6 +57,7 @@ void waitForStartupPress() {
     light++;
     if (light > 15) { light = 0; }
   }
+
   clearBoard();
   trellis.writeDisplay();
   delay(500);
@@ -101,7 +104,7 @@ void checkForWin() {
     }
   }
   // must all be out if we reach here
-
+  delay(1000);
   for (int loops=0; loops<20; loops++) {
     for (int i=0; i<16; i++) {
       toggle(i);
